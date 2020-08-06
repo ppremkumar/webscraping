@@ -16,6 +16,7 @@ with webdriver.Chrome() as driver:
     item1_list = []
     item2_list = []
     episode_number = []
+    synopsis_list = []
     for x in a:
         b = x.find_elements(By.XPATH, "//ol[@class='list-unstyled g-c-l']/li")
         for y in b:
@@ -41,9 +42,16 @@ with webdriver.Chrome() as driver:
                     episode_number.append(episode_number_item.text)
                 except NoSuchElementException:
                     episode_number.append("")
+            for each_item_synopsis_others in synopsis_others:
+                try:
+                    synopsis_text_item = each_item_synopsis_others.find_element(By.XPATH, 'span')
+                    synopsis_list.append(synopsis_text_item.text)
+                except NoSuchElementException:
+                    synopsis_list.append("")
 
-    # print(len(start_time_list), start_time_list)
-    # print(len(tvg_title_list), tvg_title_list)
-    # print(len(item1_list), item1_list)
-    # print(len(item2_list), item2_list)
-    print(len(episode_number), episode_number)
+    
+    combined_list = list(zip(start_time_list, tvg_title_list, item1_list, item2_list, episode_number, synopsis_list))
+    combined_df = pd.DataFrame(combined_list)
+    combined_df.columns = ['start_time_list', 'tvg_title_list', 'item1_list', 'item2_list', 'episode_number', 'synopsis_list']
+    combined_df.to_excel(r'C:\Users\preml\OneDrive\Desktop\selenium\scripts\cbbc_extract.xlsx', index=False)
+    print('Process complete!')
